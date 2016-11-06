@@ -1,0 +1,36 @@
+#################################################################################################################
+#          DyNet for Docker
+#################################################################################################################
+FROM lamtram-deps:latest
+#################################################################################################################
+#          Initial Setting
+#################################################################################################################
+ENV lamtram_user_name  lamtram_user
+ENV lamtram_password lamtram_pass
+ENV lamtram_home /home/lamtram_home
+ENV TINI_VERSION v0.10.0
+#################################################################################################################
+#          Initial User Setting
+#################################################################################################################
+RUN mkdir -p ${lamtram_home}
+RUN useradd -b ${lamtram_home} -s /bin/bash -p ${dynet_password} -d ${dynet_home} ${dynet_user_name}
+RUN echo ${lamtram_user_name}:${dynet_password} | chpasswd
+ADD conf/sudoers /etc/sudoers
+#################################################################################################################
+# Lamtram (this version)
+#################################################################################################################
+RUN git clone https://github.com/neubig/lamtram.git /opt/lamtram
+RUN cd /opt/lamtram && \
+        export LDFLAGS="-L/usr/local/cuda/lib64" && \
+        autoreconf -i && \
+        ./configure --with-dynet=/opt/dynet --with-eigen=/opt/eigen --with-cuda=/usr/local/cuda && \
+        make -j16 install
+RUN cp /opt/lamtram/script/* /usr/local/bin
+ENV LD_LIBRARY_PATH /usr/local/lib:${LD_LIBRARY_PATH}
+#################################################################################################################
+#          User Setting
+#################################################################################################################
+RUN chown -R lamtram_user /home/lamtram_home && \
+    chmod -R 775 /home/lamtram_home
+USER lamtram_user
+WORKDIR /home/lamtram_home

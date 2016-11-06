@@ -1,0 +1,6 @@
+---
+- name: apply development to all nodes
+  hosts: vagrants
+  remote_user: vagrant
+  roles:
+  - development

@@ -1,0 +1,40 @@
+#################################################################################################################
+#          DyNet for Docker
+#################################################################################################################
+#FROM ubuntu:14.04
+FROM nvidia/cuda:7.5-cudnn4-devel
+MAINTAINER  Masaya Ogushi
+#################################################################################################################
+#          Initial Library Install
+#################################################################################################################
+RUN apt-get upgrade && apt-get update && \
+            apt-get install -y g++ zlib1g-dev make automake libtool git autoconf \
+            libatlas3-base bzip2 wget libboost-all-dev cmake mercurial libc6-dbg gdb valgrind
+#################################################################################################################
+#          Initial User Setting 
+################################################################################################################# 
+ENV dynet_user_name dynet
+ENV dynet_password dynet_pass
+ENV dynet_home /home/dynet_home
+RUN mkdir -p ${dynet_home}
+RUN useradd -b ${dynet_home} -s /bin/bash -p ${dynet_password} -d ${dynet_home} ${dynet_user_name}
+RUN echo ${dynet_user_name}:${dynet_password} | chpasswd
+ADD conf/sudoers /etc/sudoers
+#################################################################################################################
+#          Install DyNet
+#################################################################################################################
+#RUN git clone  https://github.com/clab/dynet.git ${dynet_home}/dynet && \
+#RUN git clone  https://github.com/easylogging/easyloggingpp.git ${dynet_home}/easyloggingpp && \
+ADD dynet ${dynet_home}/dynet
+RUN hg clone https://bitbucket.org/eigen/eigen/ ${dynet_home}/eigen
+RUN cd ${dynet_home}/dynet && \
+    mkdir build && \
+    cd build && \
+    cmake .. -DEIGEN3_INCLUDE_DIR=${dynet_home}/eigen
+#cmake .. -DEIGEN3_INCLUDE_DIR=${dynet_home}/eigen && \
+RUN cd ${dynet_home}/dynet/build && make -j 4 -I /home/dynet_home/dynet
+#RUN cd ${dynet_home}/dynet/build && make -j 4 -I /home/dynet_home/dynet/ -L /home/dynet_home/dynet/build/ -l dynet
+RUN chown -R dynet /home/dynet_home && \
+    chmod -R 775 /home/dynet_home
+USER dynet
+WORKDIR /home/dynet_home

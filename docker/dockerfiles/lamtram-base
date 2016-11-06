@@ -1,0 +1,63 @@
+#################################################################################################################
+#          lamtram for Docker Base
+#################################################################################################################
+FROM nvidia/cuda:7.5-cudnn4-devel
+MAINTAINER  Masaya Ogushi
+#################################################################################################################
+#          Initial Setting
+#################################################################################################################
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+ENTRYPOINT ["/tini", "--"]
+#################################################################################################################
+#          Initial Library Install
+#################################################################################################################
+RUN apt-get upgrade && apt-get update && \
+            apt-get install -y g++ zlib1g-dev make automake libtool git autoconf \
+            libatlas3-base bzip2 wget libboost-all-dev mercurial libc6-dbg gdb valgrind \
+            mercurial libgoogle-perftools-dev libsparsehash-dev libboost-all-dev autoconf libtool openjdk-7-jdk && \
+    apt-get build-dep -y cmake
+#################################################################################################################
+# CMake 3.6.2 (version that ships with Ubuntu 14.04 doesn't fully support CUDA)
+#################################################################################################################
+RUN cd /opt && \
+        wget "https://cmake.org/files/v3.6/cmake-3.6.2.tar.gz" && \
+        tar xf cmake-3.6.2.tar.gz && \
+        cd cmake-3.6.2 && \
+        ./configure && \
+        make -j16 install
+#################################################################################################################
+# fast_align
+#################################################################################################################
+ENV FAST_ALIGN_VERSION 7c2bbca3d5d61ba4b0f634f098c4fcf63c1373e1
+RUN cd /opt && \
+        git clone https://github.com/clab/fast_align.git && \
+        cd fast_align && \
+        git checkout ${FAST_ALIGN_VERSION} && \
+        mkdir build && \
+        cd build && \
+        cmake .. && \
+        make -j16
+RUN cd /opt/fast_align/build && \
+    cp atools fast_align force_align.py /usr/local/bin
+#################################################################################################################
+# Eigen, update version as needed
+#################################################################################################################
+ENV EIGEN_VERSION b541d80aa4fd
+RUN cd /opt && \
+        hg clone https://bitbucket.org/eigen/eigen/ && \
+        cd eigen && \
+        hg update -r ${EIGEN_VERSION}
+#################################################################################################################
+#          Install DyNet
+#################################################################################################################
+# DyNet, update version as needed
+ENV DYNET_VERSION 880fa9fa9e132fb2beed7ae617db7cfe1bcd572c
+RUN cd /opt && \
+        git clone https://github.com/clab/lamtram.git && \
+        cd lamtram && \
+        git checkout ${DYNET_VERSION} && \
+        mkdir build && \
+        cd build && \
+        cmake .. -DEIGEN3_INCLUDE_DIR=/opt/eigen -DBACKEND=cuda && \
+        make -j16 install

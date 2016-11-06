@@ -1,0 +1,24 @@
+---
+- name: apt-get updates a server
+  apt: update_cache=yes
+  sudo: yes
+  tags: initial_setup
+
+- name: apt-get upgrade a server
+  apt: upgrade=full
+  sudo: yes
+  tags: initial_setup
+
+- name: apt-get install basic pkg
+  apt: pkg={{ item }} state=installed
+  sudo: yes
+  with_items:
+  - git
+  - gcc
+  - build-essential
+  - gfortran
+  - e2fslibs-dev
+  - openjdk-7-jre-headless
+  - dstat
+  - sysstat
+  tags: initial_setup

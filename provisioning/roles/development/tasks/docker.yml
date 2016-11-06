@@ -1,0 +1,70 @@
+---
+- name: apt-get updates a server
+  apt: update_cache=yes
+  sudo: yes
+  tags: initial_setup
+
+- name: apt-get install basic pkg
+  apt: pkg={{ item }} state=installed
+  sudo: yes
+  with_items:
+  - apt-transport-https
+  - ca-certificates
+
+- name: Add Docker repository key
+  shell: apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+  sudo: yes
+  tags: docker
+
+- name: make lsit
+  shell: touch /etc/apt/sources.list.d/docker.list && echo deb https://apt.dockerproject.org/repo ubuntu-trusty main >> /etc/apt/sources.list.d/docker.list
+  sudo: yes
+  tags: docker
+
+- name: apt-get updates a server restart
+  apt: update_cache=yes
+  sudo: yes
+  tags: initial_setup
+
+- name: purge docker
+  shell: apt-get purge lxc-docker
+  sudo: yes
+  tags: docker
+
+- name: cache docker
+  shell: apt-cache policy docker-engine
+  sudo: yes
+  tags: initial_setup
+
+- name: apt-get install linux extra image pkg
+  apt: pkg=linux-image-extra-3.13.0-79-generic state=installed
+  sudo: yes
+  tags: initial_setup
+
+- name: apt-get updates a server
+  apt: update_cache=yes
+  sudo: yes
+  tags: initial_setup
+
+- name: apt-get install linux image generic pkg
+  apt: pkg=linux-image-generic-lts-trusty state=installed
+  sudo: yes
+  tags: initial_setup
+
+- include: roles/development/tasks/utils/reboot.yml
+
+- name: apt-get updates a server
+  apt: update_cache=yes
+  sudo: yes
+  tags: initial_setup
+
+- name: apt-get install docker-engine
+  shell: apt-get install --force-yes -y docker-engine
+  sudo: yes
+  tags: docker
+
+- name: usermod -aG docker vagrant
+  shell: usermod -aG docker vagrant
+  sudo: yes
+  tags: docker
+
