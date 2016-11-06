@@ -1,16 +1,8 @@
-Elasticsearch Docker
+DyNet_Study_Docker
 ====
 
-Elasticsearch + Japanese + Docker
-
-![Elasticsearch + Docker](http://cl.ly/0q0Q2S3V3T0V/Image%202016-06-05%20at%2012.15.04%20PM.png)
 
 ## Description
-This is the making tool for the elasticsearch
-
-If you see the detail about it, you see the below<br>
-
-http://qiita.com/GushiSnow/private/6a157beb869319f0993f
 
 #
 ### Install
@@ -23,47 +15,11 @@ https://www.vagrantup.com/
 ### Usage
 #
 
-#### making enviroment for docker
-
-```
-cd provisioning
-ansible-playbook -vvvv -i hosts site.yml
-```
-
-#### making docker container for elastic search
-
-```
-cd docker
-make test-elastic-search
-```
-
-#### Start the elastic search
-[sudo pass : e_pass]
-
-```
-sh elastic_search_setting.sh
-```
-
-#### Regist documents for elastic search
-[sudo pass : e_pass]
-
-```
-sh elastic_regist_search.sh
-```
 
 #
 ### Code Directory Structure
 #
 ```
-ELasticsearch and docker container
-  - docker/　　　　　... Docker tool
-    - conf/　　　　　... setting conf file
-    - data/　　　　　... regist test data
-    - dockerfiles/　　　　　... Docker file for making enviroments
-    - elastic-search-python/　　... python script
-    - shell/　　... start the elasticsearch and set the documents for elastisearch
-    - template/　　... template file for elastisearch
-  - provisioning/　     　... Ansible tools
 ```
 #
 ### Licence
