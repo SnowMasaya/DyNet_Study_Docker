@@ -55,7 +55,9 @@ THE SOFTWARE.
 #
 >[Docker](https://www.docker.com/)<br>
 >[docker-project-template](https://github.com/ahawkins/docker-project-template)<br>
->[](https://github.com/neubig/lamtram)
+>[lamtram](https://github.com/neubig/lamtram)<br>
+>[DyNet](https://github.com/clab/dynet)<br>
+>[easyloggingpp](https://github.com/easylogging/easyloggingpp)<br>
 
 @misc{neubig15lamtram,
     author = {Graham Neubig},
