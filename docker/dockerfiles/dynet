@@ -31,9 +31,17 @@ RUN cd ${dynet_home}/dynet && \
     mkdir build && \
     cd build && \
     cmake .. -DEIGEN3_INCLUDE_DIR=${dynet_home}/eigen
-#cmake .. -DEIGEN3_INCLUDE_DIR=${dynet_home}/eigen && \
-RUN cd ${dynet_home}/dynet/build && make -j 4 -I /home/dynet_home/dynet
+RUN cd ${dynet_home}/dynet/build && make -j 4
 #RUN cd ${dynet_home}/dynet/build && make -j 4 -I /home/dynet_home/dynet/ -L /home/dynet_home/dynet/build/ -l dynet
+#################################################################################################################
+#          DyNet Study
+#################################################################################################################
+ADD dynet_msr ${dynet_home}/dynet_msr
+RUN cd ${dynet_home}/dynet_msr && \
+    mkdir build && \
+    cd build && \
+    cmake .. -DEIGEN3_INCLUDE_DIR=${dynet_home}/eigen
+RUN cd ${dynet_home}/dynet_msr/build && make -j 4
 RUN chown -R dynet /home/dynet_home && \
     chmod -R 775 /home/dynet_home
 USER dynet
