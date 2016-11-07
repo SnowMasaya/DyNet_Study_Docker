@@ -1,10 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-if (NOT MSVC)
-   set(MP_EXAMPLES rnnlm-mp xor-mp)
-endif()
-
-foreach(TARGET skiprnnlm mlc tok-embed poisson-regression tag-bilstm embed-cl encdec xor xor-xent xor-batch xor-batch-lookup rnnlm rnnlm-aevb rnnlm-cfsm rnnlm-batch nlm textcat read-write segrnn-sup ${MP_EXAMPLES})
+foreach(TARGET read-write semantic_distributional)
   ADD_EXECUTABLE(${TARGET} ${TARGET}.cc)
   if (WITH_CUDA_BACKEND)
     target_link_libraries(${TARGET} gdynet ${LIBS})
