@@ -6,7 +6,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "."))
 from os import path
 APP_ROOT = path.dirname( path.abspath( __file__ ) )
 
-class DataArrange():
+class DataCount():
     """
     """
 
@@ -14,11 +14,13 @@ class DataArrange():
         self.file_name = file_name
         self.out_put_file_name = out_putfile_name
         self.concept_data = {}
+        self.concept_vocabuary = {}
+        self.word_vocabuary = {}
 
     def interface_data_arrange(self):
-        self.__read_document()
+        self.__count_vocabulary()
 
-    def __read_document(self):
+    def __count_vocabulary(self):
         with open(self.file_name, 'r') as f:
             data_list = f.read().split("\n")
             self.__data_arrange(data_list)
@@ -26,20 +28,16 @@ class DataArrange():
     def __data_arrange(self, data_list):
         for data in data_list:
             split_data = data.split("\t")
-            if split_data[0] not in self.concept_data and len(split_data) >= 2:
-                value_list = []
-                value_list.append(split_data[1])
-                self.concept_data.update({split_data[0]:value_list})
-            elif len(split_data) >= 2:
-                value_list = []
-                value_list = self.concept_data[split_data[0]]
-                value_list.append(split_data[1])
-                self.concept_data.update({split_data[0]:value_list})
+            if split_data[0] not in self.concept_vocabuary:
+                self.concept_vocabuary.update({split_data[0]:1})
+            for word in split_data[1].split(" "):
+                if word not in self.word_vocabuary:
+                    self.word_vocabuary.update({word:1})
         self.__output_file()
 
     def __output_file(self):
         with open(self.out_put_file_name, 'w') as f:
-            for key, value_list in self.concept_data.items():
-                for value in value_list:
-                    f.write(value + " ||| " + key)
-                    f.write("\n")
+             f.write("Word Vocubaly" + str(len(self.word_vocabuary)))
+             f.write("\n")
+             f.write("Concept Vocubaly" + str(len(self.concept_vocabuary)))
+             f.write("\n")

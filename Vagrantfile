@@ -56,6 +56,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ".idea/",
       "disk.vdi",
       ".vagrant",
+      "data-concept-instance-relations.txt",
     ]
   # memory setting 1024MB
   config.vm.provider "virtualbox" do |vm|
