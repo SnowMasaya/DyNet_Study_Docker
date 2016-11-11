@@ -27,17 +27,21 @@ class DataCount():
 
     def __data_arrange(self, data_list):
         for data in data_list:
-            split_data = data.split("\t")
+            split_data = data.split(" ||| ")
             if split_data[0] not in self.concept_vocabuary:
                 self.concept_vocabuary.update({split_data[0]:1})
-            for word in split_data[1].split(" "):
-                if word not in self.word_vocabuary:
-                    self.word_vocabuary.update({word:1})
+            if split_data[0] != '':
+                self.word_split(split_data[1].split(" "))
         self.__output_file()
+
+    def word_split(self, split_word):
+        for word in split_word:
+            if word not in self.word_vocabuary:
+                self.word_vocabuary.update({word:1})
 
     def __output_file(self):
         with open(self.out_put_file_name, 'w') as f:
-             f.write("Word Vocubaly" + str(len(self.word_vocabuary)))
+             f.write("Word Vocubaly " + str(len(self.word_vocabuary)))
              f.write("\n")
-             f.write("Concept Vocubaly" + str(len(self.concept_vocabuary)))
+             f.write("Concept Vocubaly  " + str(len(self.concept_vocabuary)))
              f.write("\n")
