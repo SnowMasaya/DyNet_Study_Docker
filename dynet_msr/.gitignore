@@ -58,3 +58,5 @@ rnnlm/ptb-mikolov/
 
 .RData
 .RHistory
+dynet/*
+easyloggingpp/*
