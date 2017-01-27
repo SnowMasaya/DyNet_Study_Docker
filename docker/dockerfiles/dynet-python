@@ -1,0 +1,46 @@
+#################################################################################################################
+#          DyNet for Docker Python
+#################################################################################################################
+FROM ipython/ipython:3.x
+MAINTAINER  Masaya Ogushi
+#################################################################################################################
+#          Initial Library Install
+#################################################################################################################
+RUN apt-get upgrade && apt-get update && \
+            apt-get install -y python3-tk g++ zlib1g-dev make automake libtool git autoconf \
+            libatlas3-base bzip2 wget libboost-all-dev cmake mercurial libc6-dbg gdb valgrind
+#################################################################################################################
+#          Initial User Setting 
+################################################################################################################# 
+ENV dynet_user_name dynet
+ENV dynet_password dynet_pass
+ENV dynet_home /home/dynet_home
+RUN mkdir -p ${dynet_home}
+RUN useradd -b ${dynet_home} -s /bin/bash -p ${dynet_password} -d ${dynet_home} ${dynet_user_name}
+RUN echo ${dynet_user_name}:${dynet_password} | chpasswd
+ADD conf/sudoers /etc/sudoers
+#################################################################################################################
+#          Install DyNet
+#################################################################################################################
+pip install cython  # if you don't have it already.
+mkdir dynet-base
+cd dynet-base
+# getting dynet and eigen
+git clone https://github.com/clab/dynet.git
+hg clone https://bitbucket.org/eigen/eigen -r 346ecdb  # -r NUM specified a known working revision
+cd dynet
+mkdir build
+cd build
+# without GPU support:
+#cmake .. -DEIGEN3_INCLUDE_DIR=../eigen -DPYTHON=`which python`
+# or with GPU support:
+cmake .. -DEIGEN3_INCLUDE_DIR=../eigen -DPYTHON=`which python` -DBACKEND=cuda
+
+make -j 7 # replace 2 with the number of available cores
+cd python
+python setup.py install  # or `python setup.py install --user` for a user-local install.
+
+# this should suffice, but on some systems you may need to add the following line to your
+# init files in order for the compiled .so files be accessible to Python.
+# /path/to/dynet/build/dynet is the location in which libdynet.dylib resides.
+export DYLD_LIBRARY_PATH=/path/to/dynet/build/dynet/:$DYLD_LIBRARY_PATH
