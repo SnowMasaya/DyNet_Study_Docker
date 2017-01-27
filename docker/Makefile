@@ -66,7 +66,7 @@ TAG=$(shell echo $$CIRCLE_SHA1 | cut -c 1-7)
 
 .DEFAULT_GOAL:= build
 
-.PHONY: pull export import environment test test-elasticsearch test-elastic-search_parallel teardown
+.PHONY: pull export import environment test test-dynet test-lamtram-base test-lamtram test-dynet-python teardown
 
 # Define linked containers (these name should match keys in
 # fig.ml). The test & test-ci targets wil be run with all links set
@@ -74,6 +74,7 @@ TAG=$(shell echo $$CIRCLE_SHA1 | cut -c 1-7)
 DOCKER_RUN_DYNET:=docker run --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro -i -t $(REPO_NAME)/dynet bash
 DOCKER_RUN_LAMTRAM_BASE:=docker run --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro -i -t $(REPO_NAME)/lamtram-base bash
 DOCKER_RUN_LAMTRAM:=docker run --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro -i -t $(REPO_NAME)/lamtram bash
+DOCKER_RUN_PYTHON:=docker run --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro -i -t $(REPO_NAME)/dynet-python bash
 
 # Wildcard rule to build an image from a file inside dockerfiles/
 # Use the tasks like any other dependency. Order may be controller
@@ -104,6 +105,9 @@ test-lamtram-base: images/lamtram-base
 
 test-lamtram: images/lamtram
 	$(DOCKER_RUN_LAMTRAM)
+
+test-dynet-python: images/dynet-python
+	$(DOCKER_RUN_PYTHON)
 
 teardown:
 	$(DOCKER_COMPOSE) stop
