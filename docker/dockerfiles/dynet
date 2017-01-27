@@ -1,7 +1,6 @@
 #################################################################################################################
 #          DyNet for Docker
 #################################################################################################################
-#FROM ubuntu:14.04
 FROM nvidia/cuda:7.5-cudnn4-devel
 MAINTAINER  Masaya Ogushi
 #################################################################################################################
@@ -23,16 +22,13 @@ ADD conf/sudoers /etc/sudoers
 #################################################################################################################
 #          Install DyNet
 #################################################################################################################
-#RUN git clone  https://github.com/clab/dynet.git ${dynet_home}/dynet && \
-#RUN git clone  https://github.com/easylogging/easyloggingpp.git ${dynet_home}/easyloggingpp && \
-ADD dynet ${dynet_home}/dynet
+#ADD dynet ${dynet_home}/dynet
 RUN hg clone https://bitbucket.org/eigen/eigen/ ${dynet_home}/eigen
-RUN cd ${dynet_home}/dynet && \
-    mkdir build && \
-    cd build && \
-    cmake .. -DEIGEN3_INCLUDE_DIR=${dynet_home}/eigen
-RUN cd ${dynet_home}/dynet/build && make -j 4
-#RUN cd ${dynet_home}/dynet/build && make -j 4 -I /home/dynet_home/dynet/ -L /home/dynet_home/dynet/build/ -l dynet
+#RUN cd ${dynet_home}/dynet && \
+#    mkdir build && \
+#    cd build && \
+#    cmake .. -DEIGEN3_INCLUDE_DIR=${dynet_home}/eigen
+#RUN cd ${dynet_home}/dynet/build && make -j 4
 #################################################################################################################
 #          DyNet Study
 #################################################################################################################
