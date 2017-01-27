@@ -52,5 +52,14 @@ RUN cd /tmp/dynet/build/python && \
 #################################################################################################################
 RUN chown -R dynet /home/dynet_home && \
     chmod -R 775 /home/dynet_home
+ADD shell/notebook.sh \
+    dynet-python/ \
+    /home/dynet_home/
 USER dynet
 WORKDIR /home/dynet_home
+
+EXPOSE 8888
+
+ENTRYPOINT ["sh", "/home/dynet_home/notebook.sh"]
+
+

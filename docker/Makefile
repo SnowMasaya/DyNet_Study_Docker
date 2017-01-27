@@ -74,7 +74,7 @@ TAG=$(shell echo $$CIRCLE_SHA1 | cut -c 1-7)
 DOCKER_RUN_DYNET:=docker run --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro -i -t $(REPO_NAME)/dynet bash
 DOCKER_RUN_LAMTRAM_BASE:=docker run --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro -i -t $(REPO_NAME)/lamtram-base bash
 DOCKER_RUN_LAMTRAM:=docker run --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro -i -t $(REPO_NAME)/lamtram bash
-DOCKER_RUN_PYTHON:=docker run --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro -i -t $(REPO_NAME)/dynet-python bash
+DOCKER_RUN_PYTHON:=docker run --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p 8888:8888 -it $(REPO_NAME)/dynet-python bash
 
 # Wildcard rule to build an image from a file inside dockerfiles/
 # Use the tasks like any other dependency. Order may be controller
@@ -83,6 +83,7 @@ DOCKER_RUN_PYTHON:=docker run --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro -
 # for info on how this work and what $< and $(@F) mean.
 images/% : dockerfiles/% pull
 	ln -sf $< Dockerfile
+	cp -rf ../dynet-python dynet-python
 	docker build -t $(REPO_NAME)/$(@F) .
 	#rm Dockerfile
 
